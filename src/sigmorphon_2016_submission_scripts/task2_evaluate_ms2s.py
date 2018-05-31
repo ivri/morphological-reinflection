@@ -2,7 +2,7 @@
 files and evaluation script.
 
 Usage:
-  task2_evaluate_ms2s.py [--cnn-mem MEM][--input=INPUT] [--feat-input=FEAT][--hidden=HIDDEN]
+  task2_evaluate_ms2s.py [--dynet-mem MEM][--input=INPUT] [--feat-input=FEAT][--hidden=HIDDEN]
   [--epochs=EPOCHS] [--layers=LAYERS] [--optimization=OPTIMIZATION] [--nbest=NBEST]
   TRAIN_PATH TEST_PATH RESULTS_PATH SIGMORPHON_PATH...
 
@@ -14,7 +14,7 @@ Arguments:
 
 Options:
   -h --help                     show this help message and exit
-  --cnn-mem MEM                 allocates MEM bytes for (py)cnn
+  --dynet-mem MEM               allocates MEM bytes for dynet
   --input=INPUT                 input vector dimensions
   --feat-input=FEAT             feature input vector dimension
   --hidden=HIDDEN               hidden layer dimensions
@@ -130,7 +130,7 @@ def main(train_path, test_path, results_file_path, sigmorphon_root_dir, input_di
         test_cluster_target_feat_dicts = [test_target_feat_dicts[i] for i in test_cluster_to_data_indices[cluster_type]]
 
         # load best model
-        best_model, encoder_frnn, encoder_rrnn, decoder_rnn = load_best_model(str(cluster_index), alphabet,
+        best_model, params = load_best_model(str(cluster_index), alphabet,
                                                                               results_file_path, input_dim,
                                                                               hidden_dim, layers,
                                                                               feature_alphabet, feat_input_dim,
@@ -143,8 +143,7 @@ def main(train_path, test_path, results_file_path, sigmorphon_root_dir, input_di
             is_nbest = False
             predicted_templates = task2_ms2s.predict_templates(
                 best_model,
-                decoder_rnn,
-                encoder_frnn, encoder_rrnn,
+                params,
                 alphabet_index,
                 inverse_alphabet_index,
                 test_cluster_source_words,
@@ -182,9 +181,7 @@ def main(train_path, test_path, results_file_path, sigmorphon_root_dir, input_di
 
             predicted_nbset_templates = task2_ms2s.predict_nbest_templates(
                 best_model,
-                decoder_rnn,
-                encoder_frnn,
-                encoder_rrnn,
+                params,
                 alphabet_index,
                 inverse_alphabet_index,
                 test_cluster_source_words,
@@ -234,34 +231,36 @@ def load_best_model(morph_index, alphabet, results_file_path, input_dim, hidden_
     tmp_model_path = results_file_path + '_' + morph_index + '_bestmodel.txt'
     print 'trying to open ' + tmp_model_path
 
+    params = {}
+
     model = Model()
 
     # character embeddings
-    model.add_lookup_parameters("char_lookup", (len(alphabet), input_dim))
+    params["char_lookup"] = model.add_lookup_parameters((len(alphabet), input_dim))
 
     # feature embeddings
     # TODO: add another input dim for features?
-    model.add_lookup_parameters("feat_lookup", (len(feature_alphabet), feat_input_dim))
+    params["feat_lookup"] = model.add_lookup_parameters((len(feature_alphabet), feat_input_dim))
 
     # used in softmax output
-    model.add_parameters("R", (len(alphabet), hidden_dim))
-    model.add_parameters("bias", len(alphabet))
+    params["R"] = model.add_parameters((len(alphabet), hidden_dim))
+    params["bias"] = model.add_parameters(len(alphabet))
 
     # rnn's
-    encoder_frnn = LSTMBuilder(layers, input_dim, hidden_dim, model)
-    encoder_rrnn = LSTMBuilder(layers, input_dim, hidden_dim, model)
+    params["encoder_frnn"] = LSTMBuilder(layers, input_dim, hidden_dim, model)
+    params["encoder_rrnn"] = LSTMBuilder(layers, input_dim, hidden_dim, model)
 
     # TODO: inspect carefully, as dims may be sub-optimal in some cases (many feature types?)
     # 2 * HIDDEN_DIM + 3 * INPUT_DIM + len(feats) * FEAT_INPUT_DIM, as it gets a concatenation of frnn, rrnn
     # (both of HIDDEN_DIM size), previous output char, current lemma char (of INPUT_DIM size) current index char
     # and feats * FEAT_INPUT_DIM
     # 2 * len(feature_types) * feat_input_dim, as it gets both source and target feature embeddings
-    decoder_rnn = LSTMBuilder(layers, 2 * hidden_dim + 3 * input_dim + 2 * len(feature_types) * feat_input_dim,
+    params["decoder_rnn"] = LSTMBuilder(layers, 2 * hidden_dim + 3 * input_dim + 2 * len(feature_types) * feat_input_dim,
                               hidden_dim,
                               model)
 
     model.load(tmp_model_path)
-    return model, encoder_frnn, encoder_rrnn, decoder_rnn
+    return model, params
 
 
 if __name__ == '__main__':
