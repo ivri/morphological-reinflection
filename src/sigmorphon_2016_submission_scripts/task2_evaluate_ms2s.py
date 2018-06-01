@@ -259,7 +259,7 @@ def load_best_model(morph_index, alphabet, results_file_path, input_dim, hidden_
                               hidden_dim,
                               model)
 
-    model.load(tmp_model_path)
+    model.populate(tmp_model_path)
     return model, params
 
 
