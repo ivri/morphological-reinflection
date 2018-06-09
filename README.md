@@ -19,12 +19,12 @@ Arguments:
 
 Options:
 * -h --help                     show this help message and exit
-* --dynet-mem MEM               allocates MEM bytes for (py)cnn
+* --dynet-mem MEM               allocates MEM bytes for dynet
 * --input=INPUT                 input embeddings dimension
 * --hidden=HIDDEN               lstm hidden layer dimension
 * --feat-input=FEAT             feature embeddings dimension
-* --epochs=EPOCHS               amount of training epochs
-* --layers=LAYERS               amount of layers in lstm
+* --epochs=EPOCHS               number of training epochs
+* --layers=LAYERS               number of layers in lstm
 * --optimization=OPTIMIZATION   chosen optimization method ADAM/SGD/ADAGRAD/MOMENTUM/ADADELTA
 * --reg=REGULARIZATION          regularization parameter for optimization
 * --learning=LEARNING           learning rate parameter for optimization
