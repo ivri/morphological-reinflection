@@ -122,7 +122,8 @@ def get_alphabet(words, lemmas, feat_dicts, feat_dicts2=None):
 def make_feat_dict(feats_str):
             
     feat_dict = {}
-    for feat_key_val in feats_str.split(','):
+    for feat_key_val in feats_str.split(';'):
+        print(feat_key_val)
         feat_key, feat_val = feat_key_val.split('=')
         feat_dict[feat_key] = feat_val                  
     return feat_dict

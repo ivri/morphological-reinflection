@@ -6,6 +6,13 @@ Source code for the paper: [Morphological Inflection Generation with Hard Monoto
 Requires [dynet](https://github.com/clab/dynet). You should compile the aligner before running `hard_attention.py` by 
 running `make` while in the `src` directory.
 
+
+A minor fix from Kat:
+	-- added canonicalization (for the SM data after 2017 where grammatical categories are not presented);
+	edit and run: preprocessdata.sh (it uses [Kyle Gorman's canonicalization script](https://github.com/unimorph/um-canonicalize))
+	
+
+
 Usage:
 
     hard_attention.py [--dynet-mem MEM][--input=INPUT] [--hidden=HIDDEN] [--feat-input=FEAT] [--epochs=EPOCHS] [--layers=LAYERS] [--optimization=OPTIMIZATION] [--reg=REGULARIZATION][--learning=LEARNING] [--plot] [--eval] [--ensemble=ENSEMBLE] TRAIN_PATH DEV_PATH TEST_PATH RESULTS_PATH SIGMORPHON_PATH...

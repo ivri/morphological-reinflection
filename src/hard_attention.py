@@ -894,24 +894,24 @@ if __name__ == '__main__':
     if arguments['TRAIN_PATH']:
         train_path_param = arguments['TRAIN_PATH']
     else:
-        train_path_param = '/Users/roeeaharoni/research_data/sigmorphon2016-master/data/turkish-task1-train'
+        train_path_param = '../data/heb/hebrew-task1-train'
     if arguments['DEV_PATH']:
         dev_path_param = arguments['DEV_PATH']
     else:
-        dev_path_param = '/Users/roeeaharoni/research_data/sigmorphon2016-master/data/turkish-task1-train'
+        dev_path_param = '../data/heb/hebrew-task1-train'
     if arguments['TEST_PATH']:
         test_path_param = arguments['TEST_PATH']
     else:
-        test_path_param = '/Users/roeeaharoni/research_data/sigmorphon2016-master/data/turkish-task1-dev'
+        test_path_param = '../data/heb/hebrew-task1-dev'
     if arguments['RESULTS_PATH']:
         results_file_path_param = arguments['RESULTS_PATH']
     else:
         results_file_path_param = \
-            '/Users/roeeaharoni/Dropbox/phd/research/morphology/inflection_generation/results/results_' + st + '.txt'
+            '../results/results_' + st + '.txt'
     if arguments['SIGMORPHON_PATH']:
         sigmorphon_root_dir_param = arguments['SIGMORPHON_PATH'][0]
     else:
-        sigmorphon_root_dir_param = '/Users/roeeaharoni/research_data/sigmorphon2016-master/'
+        sigmorphon_root_dir_param = '../data/'
     if arguments['--input']:
         input_dim_param = int(arguments['--input'])
     else:
